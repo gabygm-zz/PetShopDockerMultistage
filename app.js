@@ -11,12 +11,12 @@ app.use(cors())
 
 
 app.get('/', function (req, res) {
-    res.json({ info: 'Node.js, Express, and Postgres API' })
+    res.json({ info: 'Get pets' })
 });
 
 app.route('/pets')
     .post(pet.addPet)
 
-app.listen(3000, function () {
+app.listen(process.env.PORT, function () {
     console.log('Example pet shop');
 })
