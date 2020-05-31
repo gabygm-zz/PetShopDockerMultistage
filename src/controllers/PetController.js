@@ -1,14 +1,16 @@
-const { pool } = require('../config/db.config')
+const pet = require('../../models').Pet
 
-const addPet = (request, response, next) => {
-    const { name, gender } = request.body
+module.exports = {
+    async create(req, res) {
+        try {
+            const petCollection = await pet.create({
+                name: req.body.name,
+            })
 
-    pool.query('INSERT INTO pet (name, gender) VALUES ($1, $2)', [name, gender], error => {
-        if (error) {
-            next(error);
+            res.status(201).send(petCollection)
+        } catch (e) {
+            console.log(e)
+            res.status(400).send(e)
         }
-        response.status(201).json({ status: 'success', message: 'Pet added.' })
-    })
+    }
 }
-
-module.exports = { addPet }

@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const cors = require('cors');
-const pet = require('./src/controllers/PetController')
+const PetController = require('./src/controllers/PetController')
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.get('/', function (req, res) {
 });
 
 app.route('/pets')
-    .post(pet.addPet)
+    .post(PetController.create)
 
 app.listen(process.env.PORT, function () {
     console.log('Example pet shop');

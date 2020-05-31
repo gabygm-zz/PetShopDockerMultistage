@@ -13,3 +13,17 @@ services:
       NODE_ENV: dev
       VIRTUAL_HOST: 'currency.test'
       VIRTUAL_PORT: 8080
+  postgresql:
+    image: postgres
+    container_name: pg-docker
+    ports:
+      - "5400:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: gaby
+      POSTGRES_PASSWORD: gaby
+      POSTGRES_DB: api
+    restart: always
