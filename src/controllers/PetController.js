@@ -5,6 +5,7 @@ module.exports = {
         try {
             const petCollection = await pet.create({
                 name: req.body.name,
+                gender: req.body.gender,
             })
 
             res.status(201).send(petCollection)

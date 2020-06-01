@@ -6,13 +6,8 @@ services:
       target: dev
     volumes:
     - .:/src
-    command: npm run dev
     ports:
       - "4545:3000"
-    environment:
-      NODE_ENV: dev
-      VIRTUAL_HOST: 'currency.test'
-      VIRTUAL_PORT: 8080
   postgresql:
     image: postgres
     container_name: pg-docker
@@ -22,8 +17,4 @@ services:
       - .env
     volumes:
       - ./dbdata:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: gaby
-      POSTGRES_PASSWORD: gaby
-      POSTGRES_DB: api
     restart: always
