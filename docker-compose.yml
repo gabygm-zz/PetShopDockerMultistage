@@ -6,6 +6,8 @@ services:
       target: dev
     volumes:
     - .:/src
+    env_file:
+      - .env
     ports:
       - "4545:3000"
   postgresql:

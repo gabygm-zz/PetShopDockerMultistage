@@ -10,7 +10,7 @@ EXPOSE 3000
 CMD ["npm", "start"]
 
 FROM base as dev
-ENV NODE_ENV=development
+ENV NODE_ENV=dev
 RUN npm install 
 EXPOSE 4545
 CMD ["npm", "run", "dev"]
