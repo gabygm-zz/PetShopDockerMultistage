@@ -1,4 +1,4 @@
-const pet = require('../../models').Pet
+const pet = require('../models/pet').Pet
 
 module.exports = {
     async create(req, res) {
