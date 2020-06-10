@@ -20,6 +20,6 @@ jobs:
                 application_name: PetShopDockerMultistaget
                 environment_name: node-express-envt
                 region: us-east-2
-                version_label: e-yeetuzm22h
+                version_label: app-2f16-200609_225420
             - name: Deployed successfully!
               run: echo App deployed to ELB
