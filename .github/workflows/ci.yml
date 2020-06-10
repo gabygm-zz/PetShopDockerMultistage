@@ -1,0 +1,25 @@
+name: Deploy master
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v1
+            - name: Generate deployment package
+              run: zip deploy.zip *.js *.json *.html *.css
+            - name: Beanstalk
+              uses: einaregilsson/beanstalk-deploy@v10
+              with:
+                aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+                aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+                application_name: PetShopDockerMultistaget
+                environment_name: node-express-envt
+                region: us-east-2
+                version_label: app-2f16-200609_225420
+            - name: Deployed successfully!
+              run: echo App deployed to ELB
