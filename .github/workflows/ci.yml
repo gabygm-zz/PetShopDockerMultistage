@@ -12,6 +12,8 @@ jobs:
               uses: actions/checkout@v1
             - name: Generate deployment package
               run: zip deploy.zip *.js *.json *.html *.css
+            - name: Run test
+              run: npm run test
             - name: Beanstalk
               uses: einaregilsson/beanstalk-deploy@v10
               with:
