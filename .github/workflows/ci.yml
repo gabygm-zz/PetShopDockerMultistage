@@ -7,22 +7,30 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        strategy:
+          matrix:
+            node-version: [10.x, 12.x, 14.x]
+          
         steps:
-            - name: Checkout source code
-              uses: actions/checkout@v1
-            - name: Generate deployment package
-              run: zip deploy.zip *.js *.json *.html *.css
-            - run: npm install
-            - name: Run test
-              run: npm run test
-            - name: Beanstalk
-              uses: einaregilsson/beanstalk-deploy@v10
-              with:
-                aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-                aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-                application_name: PetShopDockerMultistaget
-                environment_name: node-express-envt
-                region: us-east-2
-                version_label: app-2f16-200609_225420
-            - name: Deployed successfully!
-              run: echo App deployed to ELB
+          - name: Checkout source code
+            uses: actions/checkout@v1
+          - name: Use Node.js ${{ matrix.node-version }}
+            uses: actions/setup-node@v1
+            with:
+              node-version: ${{ matrix.node-version }}
+          - run: npm ci
+          - run: npm install
+          
+          - name: Run test
+            run: npm run test
+          - name: Beanstalk
+            uses: einaregilsson/beanstalk-deploy@v10
+            with:
+              aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+              aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+              application_name: PetShopDockerMultistaget
+              environment_name: node-express-envt
+              region: us-east-2
+              version_label: app-2f16-200609_225420
+          - name: Deployed successfully!
+            run: echo App deployed to ELB
