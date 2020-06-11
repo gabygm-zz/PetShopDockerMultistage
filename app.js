@@ -16,6 +16,6 @@ app.get('/', function (req, res) {
 app.route('/pets')
     .post(PetController.create)
 
-app.listen(process.env.PORT, function () {
+app.listen(process.env.PORT||3000, function () {
     console.log('Example pet shop');
 })
