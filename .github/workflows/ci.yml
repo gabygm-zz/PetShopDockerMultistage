@@ -28,8 +28,8 @@ jobs:
             with:
               aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
               aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-              application_name: PetShopDockerMultistaget
-              environment_name: node-express-envt
+              application_name: petshop
+              environment_name: pet-shop-env
               region: us-east-2
               version_label: app-a766-200611_012605
           - name: Deployed successfully!
