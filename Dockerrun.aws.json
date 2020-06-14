@@ -1,7 +1,7 @@
 {
     "AWSEBDockerrunVersion": "1",
     "Image": {
-      "Name": "gabygm/node-docker-eb"
+      "Name": "gabygm/node-docker-eb:latest"
     },
     "Ports": [
       {

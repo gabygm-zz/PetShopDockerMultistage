@@ -1,36 +1,64 @@
 name: Deploy master
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        strategy:
-          matrix:
-            node-version: [ 12.x ]
-          
-        steps:
-          - name: Checkout source code
-            uses: actions/checkout@v1
-          - name: Use Node.js ${{ matrix.node-version }}
-            uses: actions/setup-node@v1
-            with:
-              node-version: ${{ matrix.node-version }}
-          - run: npm ci
-          - run: npm install
-          
-          - name: Run test
-            run: npm run test
-          - name: Beanstalk
-            uses: einaregilsson/beanstalk-deploy@v10
-            with:
-              aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-              aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-              application_name: petshop
-              environment_name: pet-shop-env
-              region: us-east-2
-              version_label: app-a766-200611_012605
-          - name: Deployed successfully!
-            run: echo App deployed to ELB
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v1
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm ci
+      - run: |
+          npm install
+          npm run test
+
+  push_docker:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: gabygm/node-docker-eb
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Login docker registry
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_TOKEN
+      - name: Build docker image
+        run: docker build . -t $IMAGE:latest -t $IMAGE:${GITHUB_SHA::8}
+      - name: Push docker image
+        run: |
+          docker push $IMAGE:${GITHUB_SHA::8}
+          docker push $IMAGE:latest
+
+  deploy_to_production:
+    needs: push_docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v1
+      - name: package application
+        run: zip deploy.zip Dockerrun.aws.json
+      - name: Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v10
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: petshop
+          environment_name: pet-shop-env
+          region: us-east-2
+          version_label: ${{ github.SHA }}
+          version_description: ${{ github.SHA }}
+          use_existing_version_if_available: true
+          deployment_package: deploy.zip
+      - name: Deployed successfully!
+        run: echo App deployed to ELB
