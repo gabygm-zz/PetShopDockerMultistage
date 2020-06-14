@@ -27,6 +27,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
+      - name: Generate Dockerrun.aws.json
+        run: ./generate.sh
+      - name: Create deployment
+        run: zip deploy.zip Dockerrun.aws.json
+      - uses: actions/upload-artifact@v2
+        with:
+          name: deployment
+          path: deploy.zip
       - name: Login docker registry
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
@@ -44,11 +52,10 @@ jobs:
     needs: push_docker
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v1
-      - name: package application
-        run: zip deploy.zip Dockerrun.aws.json
-      - name: Beanstalk
+      - uses: actions/download-artifact@v2
+        with:
+          name: deployment
+      - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v10
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
@@ -60,5 +67,3 @@ jobs:
           version_description: ${{ github.SHA }}
           use_existing_version_if_available: true
           deployment_package: deploy.zip
-      - name: Deployed successfully!
-        run: echo App deployed to ELB

@@ -1,7 +1,11 @@
+#!/bin/bash
+SHA=${GITHUB_SHA::8}
+
+cat << EOF > Dockerrun.aws.json
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "gabygm/node-docker-eb:9999fnsj"
+    "Name": "gabygm/node-docker-eb:$SHA"
   },
   "Ports": [
     {
@@ -9,3 +13,4 @@
     }
   ]
 }
+EOF
