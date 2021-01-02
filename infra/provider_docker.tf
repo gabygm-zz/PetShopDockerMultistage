@@ -13,10 +13,14 @@ provider "docker" {
 
 # Create a container
 resource "docker_container" "petshop" {
-  image = "production:latest"
+  image = docker_image.pet.latest
   name  = "production"
   ports {
       internal = 3000
       external = 4000
   }
+}
+
+resource "docker_image" "pet" {
+  name = "gabygm/node-docker-eb:latest"
 }
